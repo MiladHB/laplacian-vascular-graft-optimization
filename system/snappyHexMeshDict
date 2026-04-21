@@ -1,0 +1,324 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#includeEtc "caseDicts/mesh/generation/snappyHexMeshDict.cfg"
+
+castellatedMesh on;
+snap            on;
+addLayers       on;
+
+geometry
+{
+   inlet 
+   {
+	type triSurfaceMesh;
+        file "inlet.stl";
+   }
+
+   outlet 
+   {
+	type triSurfaceMesh;
+        file "outlet.stl";
+   }
+
+   sa1 
+   {
+	type triSurfaceMesh;
+        file "sa1.stl";
+   }
+
+   sa2 
+   {
+	type triSurfaceMesh;
+        file "sa2.stl";
+   }
+
+   sa3 
+   {
+	type triSurfaceMesh;
+        file "sa3.stl";
+   }
+
+   wall 
+   {
+	type triSurfaceMesh;
+        file "wall.stl";
+   }
+          
+   RefinementBox
+   {
+	type searchableBox;
+	min (-70e-3 -80e-3 -80e-3);
+	max (70e-3 80e-3 120e-3);
+   }
+};
+
+
+castellatedMeshControls
+{
+
+    // Refinement parameters
+    //----------------------
+
+
+    // If local number of cells is >=maxLocalCells on any processor
+    // switches from refinement followed by balancing
+    // (current method) to (weighted) balancing before refinement
+    maxLocalCells 150000;
+
+    //Overall cell limit. Refinement will stop immediately 
+    maxGlobalCells 20000000;
+
+    // The surface refinement loop might spend lots of iterations refining
+    // just a few cells. This setting will cause refinement to stop if <minimumRefine
+    // are selected for refinement
+    minRefinementCells 0;
+
+    // Allow a certain level of imbalance during refining
+    maxLoadUnbalance 0.1;
+
+    // Number of buffer layers between different levels
+    nCellsBetweenLevels 3;
+
+    // Feature angle
+    // used if min and max refinement level of a surface differ
+    // used if feature snapping is used
+    resolveFeatureAngle 30;
+
+    // Explicit feature edge refinement
+    //---------------------------------
+
+    features
+    (
+      { 
+	  file  "inlet.eMesh"; 
+          level 0;
+      }
+
+      { 
+	  file  "outlet.eMesh"; 
+          level 0;
+      }
+
+      { 
+	  file  "sa1.eMesh"; 
+          level 0;
+      }
+
+      { 
+	  file  "sa2.eMesh"; 
+          level 0;
+      }
+
+      { 
+	  file  "sa3.eMesh"; 
+          level 0;
+      }
+
+      { 
+	  file  "wall.eMesh"; 
+          level 0;
+      }
+
+    );
+
+
+    // Surface based refinement
+    //-----------------------------
+    
+    refinementSurfaces
+    {
+        inlet
+        {
+            level (3 4);
+        }
+
+        outlet
+        {
+            level (3 4);
+        }
+
+        sa1
+        {
+            level (3 4);
+        }
+
+        sa2
+        {
+            level (3 4);
+        }
+
+        sa3
+        {
+            level (3 4);
+        }
+
+        wall
+        {
+            level (3 4);
+        }
+    }
+
+    //Region-wise refinement
+    //-----------------------
+    //Specifics refinement level for cells in relation to a surface
+    
+    refinementRegions
+    {
+	RefinementBox
+        {
+            mode inside;  //was inside
+            levels ((1e15 2)); //was (1e15 1/2)
+        }
+    }
+
+
+
+    // Mesh selection
+    //----------------
+
+    //To decide which side of mesh to keep; pick a Cartesian point in 
+    //the region in which to represent the region you want to keep
+    
+    locationInMesh (0.0192075 0.0512216 0.0604134); 
+
+    // Whether any faceZones (are specified in the refinementSurfaces) are 
+    // are only on the boundary of corresponding cellZones or also allow 
+    // free-standing zone faces. 
+    allowFreeStandingZoneFaces true;
+
+}
+
+
+//Settings for the snapping
+snapControls
+{
+
+    // Number of patch smoothing iterations before finding correspondence to surface
+    nSmoothPatch   3;
+
+    //Maximum relative distance for points to be attracted by surface
+    tolerance   2.0;
+
+    //Number of mesh displacement relaxation iterations
+    nSolveIter  100;
+
+    // Maximum number of snapping relaxation iterations
+    nRelaxIter  5;
+
+    // Feature snapping----
+    // Number of feature edge snapping iterations
+    nFeatureSnapIter   15;
+
+    // Detect features by sampling the surface
+    implicitFeatureSnap   false;
+
+    // Use castellatedMeshControls::features (default = true)
+    explicitFeatureSnap   true;
+
+
+    // Detect features between multiple surfaces
+    multiRegionFeatureSnap  false;
+}
+
+
+// Settings for the layer addition
+addLayersControls
+{
+    layers
+    {
+        wall
+        {
+            nSurfaceLayers 2;
+        }
+
+        inlet
+        {
+            nSurfaceLayers 2;
+        }
+
+        outlet
+        {
+            nSurfaceLayers 2;
+        }
+
+        sa1
+        {
+            nSurfaceLayers 2;
+        }
+
+        sa2
+        {
+            nSurfaceLayers 2;
+        }
+
+        sa3
+        {
+            nSurfaceLayers 2;
+        }
+    }
+
+    relativeSizes       true;
+    expansionRatio      1.2;
+    finalLayerThickness 0.5;
+    minThickness        0.01;
+    nGrow               0;
+
+    // Advanced settings
+    featureAngle           130;
+    slipFeatureAngle       30;
+    nRelaxIter             5;
+    nSmoothSurfaceNormals  1;
+    nSmoothNormals         3;
+    nSmoothThickness       10;
+    maxFaceThicknessRatio  0.5;
+    minMedianAxisAngle     90;
+    nBufferCellsNoExtrude  0;
+    nLayerIter             50;
+    nRelaxedIter           20;
+
+}
+
+//Generic mesh quality setting
+
+meshQualityControls
+{
+    maxNonOrtho	          45; //Maximum non-orthogonality allowed; 180 disables
+    maxBoundarySkewness	  20; //Max boundary face skewness allowed;  <0 disables
+    maxInternalSkewness	   4; //Max internal face skewness allowed;  <0 disables
+    maxConcave	          80; //Max concaveness allowed; 180 disables
+    minFlatness	          0.5; //Ratio of minimum projected area to actual area; -1 disables
+    minVol	        1e-13; //Minimum pyramid volume; large negative number, e.g.-1e30 disables
+    minTetQuality	1e-9; //
+    minArea	           -1
+    minTwist	         0.05;
+    minDeterminant	 0.001;
+    minFaceWeight         0.05;
+    minVolRatio	          0.01;
+    minTriangleTwist	   -1;
+    nSmoothScale	    4;
+    errorReduction	  0.75;
+    relaxed
+    {
+	maxNonOrtho   45;
+    }
+}
+
+debug  0;
+
+mergeTolerance 1e-6;
+
+// ************************************************************************* //

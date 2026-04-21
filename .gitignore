@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Local virtual environments
+.venv/
+venv/
+env/
+
+# Generated optimization outputs
+results/
+OPTIM
+PRE_CORRECTED_PRESSURE.jpg
+PROB.jpg
+WSSAA.txt
+WSSDA.txt
+tmp.txt
+
+# OpenFOAM generated runtime directories/files (keep source case files)
+[1-9]*/
+postProcessing/
+VTK/
+0.org/
