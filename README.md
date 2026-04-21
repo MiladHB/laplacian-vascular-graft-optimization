@@ -5,6 +5,12 @@ This repository contains the **code and data for one example case** associated w
 - Milad Habibi et al., *Automatic Laplacian-based shape optimization for patient-specific vascular grafts*, Computers in Biology and Medicine, 2024.  
   [ScienceDirect link](https://www.sciencedirect.com/science/article/pii/S0010482524013933)
 
+## Figure
+
+[METHOD_REB_MA.pdf](METHOD_REB_MA.pdf)
+
+*The Optimized geometry and corresponding percentage of pressure drop reduction with respect to the pre-lofted model using different weights for Laplacian matrix calculation.*
+
 ## What is included
 
 - OpenFOAM case setup (`constant/`, `system/`)
