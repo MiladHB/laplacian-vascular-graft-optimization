@@ -7,7 +7,7 @@ This repository contains the **code and data for one example case** associated w
 
 ## Figure
 
-[METHOD_REB_MA.pdf](METHOD_REB_MA.pdf)
+![Optimized geometry and pressure-drop reduction](METHOD_REB_MA.png)
 
 *The Optimized geometry and corresponding percentage of pressure drop reduction with respect to the pre-lofted model using different weights for Laplacian matrix calculation.*
 
